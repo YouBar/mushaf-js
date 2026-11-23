@@ -33,7 +33,7 @@ npm ci
 | `npm test` | Run the test suite (Vitest with jsdom) |
 | `npm run typecheck` | Type-check all packages |
 | `npm run build` | Build `packages/core` and `packages/vue` into `dist/` |
-| `npm run build:browser -w packages/core` | Build the browser bundle (`dist/mushaf.min.js`) |
+| `npm run build:browser -w packages/core` | Build only the browser bundle (`dist/mushaf.min.js`; `build` includes it) |
 | `npm run docs:dev` | Run the documentation site locally |
 | `npm run build-data` | Rebuild `data/pages/`, `page-index.json` and `quran-index.json` from `data/source/` |
 | `npm run demo` | Serve the demo page at `http://localhost:8090/examples/basic.html` |

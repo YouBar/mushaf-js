@@ -3,9 +3,11 @@ name: Publish to npm
 # Publishes mushaf.js / @mushafjs/vue to the public npm registry, on a GitHub
 # release (tag mushaf.js-vX.Y.Z or @mushafjs/vue-vX.Y.Z) or manually.
 #
-# Auth: npm trusted publishing (OIDC) once it is set up on npmjs.com for this
-# workflow; until then the NPM_TOKEN secret is used. Remove NPM_TOKEN after
-# trusted publishing works.
+# Auth: npm trusted publishing (OIDC), configured on npmjs.com for this
+# workflow file. No npm token is stored in the repo. The trusted publisher only
+# allows staged publishing: this workflow stages the version, and a maintainer
+# approves it with 2FA on npmjs.com (or `npm stage approve <id>`) to release it.
+# For core it then uploads the browser bundle to the CDN (cdn.yml).
 
 on:
   release:
@@ -28,6 +30,8 @@ jobs:
   publish:
     name: Build & publish
     runs-on: ubuntu-latest
+    outputs:
+      path: ${{ steps.pkg.outputs.path }}
 
     steps:
       - name: Checkout
@@ -40,7 +44,7 @@ jobs:
           cache: npm
           registry-url: https://registry.npmjs.org
 
-      # Trusted publishing needs npm 11.5+.
+      # Staged publishing needs npm 11.15+.
       - name: Update npm
         run: npm install -g npm@11
 
@@ -70,8 +74,13 @@ jobs:
         working-directory: ${{ steps.pkg.outputs.path }}
         run: npm run build
 
-      - name: Publish
+      - name: Stage for approval
         working-directory: ${{ steps.pkg.outputs.path }}
-        run: npm publish --access public
-        env:
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
+        run: npm stage publish --access public
+
+  cdn:
+    name: Browser bundle to the CDN
+    needs: publish
+    if: needs.publish.outputs.path == 'packages/core'
+    uses: ./.github/workflows/cdn.yml
+    secrets: inherit

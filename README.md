@@ -13,6 +13,8 @@ An interactive Madani Mushaf for the web. mushaf.js renders all 604 pages of the
 Mushaf (Hafs 'an 'Asim, KFGQPC V2 print) exactly as printed, and makes every word, ayah
 and surah interactive: click it, highlight it, select a range of it.
 
+**[Documentation](https://mushafjs.com/getting-started)** · **[Live demo](https://mushafjs.com/demo)** · [mushafjs.com](https://mushafjs.com)
+
 - **Faithful to the print:** QPC V2 per-page fonts, 15 lines per page, calligraphic surah
   headers and basmala, and the margin ornaments for juz, hizb and rub'.
 - **Word-level interaction:** click events for words, ayah markers, surah headers and
@@ -39,6 +41,9 @@ Or use the browser bundle:
 <script src="https://cdn.mushafjs.com/mushaf.min.js"></script>
 <!-- exposes the global `Mushaf`: new Mushaf.Mushaf({ … }) -->
 ```
+
+These URLs always serve the latest release. To pin a version, use
+`https://cdn.mushafjs.com/v1.0.2/mushaf.min.js` (and `…/mushaf.min.css`).
 
 ## Quick start
 
@@ -141,13 +146,15 @@ const page = ref(1);
 
 ## Documentation
 
-- [Getting started](docs/getting-started.md)
-- [Configuration](docs/configuration.md)
-- [API reference](docs/api-reference.md)
-- [Events](docs/events.md), [navigation](docs/navigation.md) and [highlighting](docs/highlighting.md)
-- [Vue](docs/vue.md)
-- [Use cases](docs/use-cases/index.md): memorization tracking, assigning ranges, follow-along, bookmarks
-- [Page data](docs/data.md) and [fonts](docs/fonts.md)
+The full documentation is at **[mushafjs.com](https://mushafjs.com)**.
+
+- [Getting started](https://mushafjs.com/getting-started)
+- [Configuration](https://mushafjs.com/configuration)
+- [API reference](https://mushafjs.com/api-reference)
+- [Events](https://mushafjs.com/events), [navigation](https://mushafjs.com/navigation) and [highlighting](https://mushafjs.com/highlighting)
+- [Vue](https://mushafjs.com/vue)
+- [Use cases](https://mushafjs.com/use-cases/): memorization tracking, assigning ranges, follow-along, bookmarks
+- [Page data](https://mushafjs.com/data) and [fonts](https://mushafjs.com/fonts)
 
 ## Self-hosting the assets
 
@@ -163,7 +170,7 @@ new Mushaf({
 });
 ```
 
-See [fonts](docs/fonts.md) and [page data](docs/data.md) for the exact layout.
+See [fonts](https://mushafjs.com/fonts) and [page data](https://mushafjs.com/data) for the exact layout.
 
 ## Browser support
 

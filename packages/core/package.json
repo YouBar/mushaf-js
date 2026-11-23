@@ -1,6 +1,6 @@
 {
   "name": "mushaf.js",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Interactive Madani Mushaf renderer with word/ayah/surah-level interaction",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -15,14 +15,16 @@
   },
   "files": [
     "dist",
-    "README.md"
+    "README.md",
+    "LICENSE"
   ],
   "scripts": {
-    "build": "tsup src/index.ts --format cjs,esm --dts --clean && node -e \"require('fs').copyFileSync('styles/mushaf.css','dist/mushaf.min.css')\"",
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean && node -e \"require('fs').copyFileSync('styles/mushaf.css','dist/mushaf.min.css')\" && npm run build:browser",
     "build:browser": "tsup src/index.ts --format iife --global-name Mushaf --minify --out-dir dist/browser && node -e \"const fs=require('fs');fs.renameSync('dist/browser/index.global.js','dist/mushaf.min.js');fs.rmSync('dist/browser',{recursive:true})\"",
     "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
     "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prepack": "tsx ../../scripts/package-readme.ts README.md"
   },
   "devDependencies": {
     "jsdom": "^29.0.1",
@@ -46,7 +48,7 @@
       "email": "younes@youbar.nl"
     }
   ],
-  "homepage": "https://github.com/YouBar/mushaf-js#readme",
+  "homepage": "https://mushafjs.com",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/YouBar/mushaf-js.git"

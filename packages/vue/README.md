@@ -1,9 +1,10 @@
 # @mushafjs/vue
 
 [![npm](https://img.shields.io/npm/v/@mushafjs/vue?color=c9a24f&label=npm)](https://www.npmjs.com/package/@mushafjs/vue)
-[![license](https://img.shields.io/badge/license-MIT-1e3468)](../../LICENSE)
+[![license](https://img.shields.io/badge/license-MIT-1e3468)](https://github.com/YouBar/mushaf-js/blob/develop/LICENSE)
 
 Vue 3 component wrapper for [mushaf.js](https://github.com/YouBar/mushaf-js).
+Full documentation: **[mushafjs.com/vue](https://mushafjs.com/vue)**.
 
 ## Installation
 

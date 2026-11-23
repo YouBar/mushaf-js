@@ -33,6 +33,10 @@ npm install mushaf.js
 
 The browser bundle exposes everything under the global `Mushaf` (`Mushaf.Mushaf`, `Mushaf.MUSHAF_CDN_URL`, …).
 
+`/mushaf.min.js` and `/mushaf.min.css` always serve the latest release (cached for up to 4 hours).
+To pin a version, put it in the path: `https://cdn.mushafjs.com/v1.0.2/mushaf.min.js`.
+The bundle is also in the npm package (`mushaf.js/dist/mushaf.min.js`), so jsDelivr and unpkg work too.
+
 ---
 
 ## Assets (page data & fonts)

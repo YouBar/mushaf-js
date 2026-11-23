@@ -1,6 +1,6 @@
 {
   "name": "@mushafjs/vue",
-  "version": "1.0.0",
+  "version": "1.0.2",
   "description": "Vue 3 component wrapper for mushaf.js",
   "main": "dist/index.js",
   "module": "dist/index.mjs",
@@ -19,7 +19,8 @@
   "scripts": {
     "build": "vite build",
     "dev": "vite build --watch",
-    "typecheck": "vue-tsc -p tsconfig.typecheck.json"
+    "typecheck": "vue-tsc -p tsconfig.typecheck.json",
+    "prepack": "tsx ../../scripts/package-readme.ts"
   },
   "peerDependencies": {
     "mushaf.js": ">=1.0.0",
@@ -48,7 +49,7 @@
       "email": "younes@youbar.nl"
     }
   ],
-  "homepage": "https://github.com/YouBar/mushaf-js#readme",
+  "homepage": "https://mushafjs.com",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/YouBar/mushaf-js.git"
