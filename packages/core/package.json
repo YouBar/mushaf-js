@@ -1,0 +1,59 @@
+{
+  "name": "mushaf.js",
+  "version": "1.0.0",
+  "description": "Interactive Madani Mushaf renderer with word/ayah/surah-level interaction",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    },
+    "./styles": "./dist/mushaf.min.css"
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "tsup src/index.ts --format cjs,esm --dts --clean && node -e \"require('fs').copyFileSync('styles/mushaf.css','dist/mushaf.min.css')\"",
+    "build:browser": "tsup src/index.ts --format iife --global-name Mushaf --minify --out-dir dist/browser && node -e \"const fs=require('fs');fs.renameSync('dist/browser/index.global.js','dist/mushaf.min.js');fs.rmSync('dist/browser',{recursive:true})\"",
+    "dev": "tsup src/index.ts --format cjs,esm --dts --watch",
+    "test": "vitest run",
+    "typecheck": "tsc --noEmit"
+  },
+  "devDependencies": {
+    "jsdom": "^29.0.1",
+    "tsup": "^8.0.0",
+    "vitest": "^1.0.0"
+  },
+  "keywords": [
+    "quran",
+    "mushaf",
+    "madani",
+    "islamic",
+    "arabic",
+    "interactive",
+    "html",
+    "css"
+  ],
+  "author": "YouBar Solutions",
+  "contributors": [
+    {
+      "name": "Younes El Barnoussi",
+      "email": "younes@youbar.nl"
+    }
+  ],
+  "homepage": "https://github.com/YouBar/mushaf-js#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YouBar/mushaf-js.git"
+  },
+  "bugs": "https://github.com/YouBar/mushaf-js/issues",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

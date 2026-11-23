@@ -1,0 +1,368 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>mushaf.js — Demo</title>
+  <!-- Run `npm run build` first; serve the repository root (e.g. `npx serve .`)
+       and open /examples/basic.html -->
+  <link rel="stylesheet" href="../packages/core/dist/mushaf.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; }
+
+    :root {
+      --bg: #f0ece4; --fg: #1a1a1a; --bar: #fff; --bar-border: #e0d5c5;
+      --btn: #fdf8f0; --btn-border: #c9b48a; --btn-fg: #2c1810; --muted: #7a6040;
+      --head: #2c1810; --head-fg: #f5e6c8; --accent: #f5c87a;
+      --card: #fdf8f0; --card-border: #e0d5c5;
+    }
+    html[data-color-scheme="dark"] {
+      --bg: #0d0d0d; --fg: #ddd; --bar: #181818; --bar-border: #2c2c2c;
+      --btn: #222; --btn-border: #3d3d3d; --btn-fg: #ddd; --muted: #999;
+      --head: #050505; --head-fg: #ddd; --card: #1d1d1d; --card-border: #2c2c2c;
+    }
+    @media (prefers-color-scheme: dark) {
+      html:not([data-color-scheme="light"]) {
+        --bg: #0d0d0d; --fg: #ddd; --bar: #181818; --bar-border: #2c2c2c;
+        --btn: #222; --btn-border: #3d3d3d; --btn-fg: #ddd; --muted: #999;
+        --head: #050505; --head-fg: #ddd; --card: #1d1d1d; --card-border: #2c2c2c;
+      }
+    }
+
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--fg);
+      font-family: system-ui, -apple-system, sans-serif;
+      direction: ltr;
+    }
+
+    header {
+      background: var(--head);
+      color: var(--head-fg);
+      padding: 12px 20px;
+      display: flex;
+      align-items: baseline;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    header h1 { margin: 0; font-size: 1.2rem; color: var(--accent); }
+    header span { font-size: 0.8rem; opacity: 0.75; }
+
+    .bar {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      background: var(--bar);
+      border-bottom: 1px solid var(--bar-border);
+      padding: 8px 20px;
+    }
+    .bar button, .bar select, .bar input {
+      padding: 6px 12px;
+      border: 1px solid var(--btn-border);
+      border-radius: 4px;
+      font-size: 0.85rem;
+      background: var(--btn);
+      color: var(--btn-fg);
+    }
+    .bar button { cursor: pointer; }
+    .bar button:disabled { opacity: 0.4; cursor: default; }
+    .bar button[aria-pressed="true"] { outline: 2px solid var(--muted); outline-offset: 1px; }
+    .bar input[type="number"] { width: 72px; text-align: center; }
+    .bar input#ayah-input { width: 90px; text-align: center; }
+    .bar label, .bar .hint { font-size: 0.8rem; color: var(--muted); }
+    .sep { width: 1px; height: 24px; background: var(--bar-border); margin: 0 4px; }
+    #btn-theme { margin-inline-start: auto; border-radius: 20px; }
+    #surah-select { max-width: 210px; }
+
+    main { display: flex; min-height: calc(100vh - 150px); }
+    #mushaf-container { flex: 1; min-width: 0; }
+
+    aside {
+      width: 290px;
+      flex-shrink: 0;
+      background: var(--bar);
+      border-left: 1px solid var(--bar-border);
+      padding: 18px 16px;
+      font-size: 0.85rem;
+      position: sticky;
+      top: 0;
+      align-self: flex-start;
+      max-height: 100vh;
+      overflow-y: auto;
+    }
+    aside h2 { margin: 0 0 12px; font-size: 0.9rem; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--card-border);
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 12px;
+    }
+    .card h3 {
+      margin: 0 0 6px;
+      font-size: 0.72rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
+    .card p { margin: 4px 0; }
+    .arabic {
+      font-family: 'KFGQPC Uthmanic Script HAFS', 'Amiri Quran', 'Amiri', 'Geeza Pro', serif;
+      font-size: 1.45rem;
+      line-height: 1.9;
+      direction: rtl;
+      text-align: right;
+    }
+
+    #error-banner {
+      display: none;
+      background: #fce4ec;
+      border: 1px solid #ef9a9a;
+      color: #b71c1c;
+      border-radius: 6px;
+      padding: 8px 14px;
+      margin: 10px 20px 0;
+      font-size: 0.85rem;
+    }
+    #error-banner.active { display: block; }
+
+    @media (max-width: 860px) {
+      main { flex-direction: column; }
+      aside { width: 100%; position: static; max-height: none; border-left: none; border-top: 1px solid var(--bar-border); }
+    }
+  </style>
+</head>
+<body>
+
+<header>
+  <h1>mushaf.js</h1>
+  <span>Interactive Madani Mushaf — Demo</span>
+</header>
+
+<div class="bar">
+  <button id="btn-next" title="Next page (←)">&#8592; Next</button>
+  <label for="page-input">Page</label>
+  <input id="page-input" type="number" min="1" max="604" value="1" />
+  <span class="hint">/ 604</span>
+  <button id="btn-go">Go</button>
+  <button id="btn-prev" title="Previous page (→)">Prev &#8594;</button>
+
+  <div class="sep"></div>
+  <label for="surah-select">Surah</label>
+  <select id="surah-select"></select>
+
+  <div class="sep"></div>
+  <label for="ayah-input">Ayah</label>
+  <input id="ayah-input" placeholder="2:255" />
+  <button id="btn-ayah">Go</button>
+
+  <button id="btn-theme" title="Toggle colour mode">🖥 System</button>
+</div>
+
+<div class="bar" role="group" aria-label="Highlight style">
+  <label>Highlight style:</label>
+  <button class="hl" data-style="background" aria-pressed="true">Background</button>
+  <button class="hl" data-style="underline">Underline</button>
+  <button class="hl" data-style="border">Border</button>
+  <button class="hl" data-style="color">Colour</button>
+  <button id="hl-clear">Clear all</button>
+  <span class="hint">Click a word, an ayah marker ۝ or a surah title.</span>
+</div>
+
+<div id="error-banner" role="alert"></div>
+
+<main>
+  <div id="mushaf-container"></div>
+
+  <aside>
+    <h2>Selection</h2>
+    <div class="card" id="card-word" hidden>
+      <h3>Word</h3>
+      <div class="arabic" id="word-text"></div>
+      <p id="word-ref"></p>
+    </div>
+    <div class="card" id="card-ayah" hidden>
+      <h3>Ayah</h3>
+      <p id="ayah-ref"></p>
+      <div class="arabic" id="ayah-text"></div>
+    </div>
+    <div class="card" id="card-surah" hidden>
+      <h3>Surah</h3>
+      <div class="arabic" id="surah-name"></div>
+      <p id="surah-info"></p>
+    </div>
+    <div class="card" id="card-marker" hidden>
+      <h3>Margin marker</h3>
+      <p id="marker-info"></p>
+    </div>
+    <div class="card">
+      <h3>Page</h3>
+      <p id="page-info">—</p>
+    </div>
+  </aside>
+</main>
+
+<script type="module">
+  import { Mushaf } from '../packages/core/dist/index.mjs';
+
+  const $ = (sel) => document.querySelector(sel);
+
+  const COLORS = {
+    background: undefined,          // theme default (soft gold)
+    underline: '#2e7d32',
+    border: '#1565c0',
+    color: '#b8860b',
+  };
+  let style = 'background';
+  const hl = () => ({ style, color: COLORS[style] });
+
+  let surahs = [];
+  let mushaf;
+
+  function showError(msg) {
+    const banner = $('#error-banner');
+    banner.textContent = msg;
+    banner.classList.add('active');
+    clearTimeout(showError.t);
+    showError.t = setTimeout(() => banner.classList.remove('active'), 5000);
+  }
+
+  function hideCards() {
+    ['#card-word', '#card-ayah', '#card-surah', '#card-marker'].forEach((id) => ($(id).hidden = true));
+  }
+
+  function surahForPage(page) {
+    let current = surahs[0];
+    for (const s of surahs) if (s.start_page <= page) current = s;
+    return current;
+  }
+
+  function onPage(page) {
+    $('#page-input').value = page;
+    $('#page-info').textContent = `Page ${page} of 604`;
+    $('#btn-prev').disabled = page <= 1;
+    $('#btn-next').disabled = page >= 604;
+    const s = surahForPage(page);
+    if (s) $('#surah-select').value = s.number;
+  }
+
+  async function nav(fn) {
+    try { await fn(); } catch (err) { showError(err.message); console.error(err); }
+  }
+
+  // ── Mushaf ────────────────────────────────────────────────────────────────
+  mushaf = new Mushaf({
+    container: '#mushaf-container',
+    dataBaseUrl: '../data/pages',
+    fontsBaseDir: '../fonts',
+    preloadPages: 3,
+
+    onWordClick: (word) => {
+      mushaf.highlightWord(word.surah, word.ayah, word.word, hl());
+      $('#card-word').hidden = false;
+      $('#word-text').textContent = word.text ?? '';
+      $('#word-ref').textContent = `Surah ${word.surah} • Ayah ${word.ayah} • Word ${word.word}`;
+    },
+
+    onAyahClick: (ayah) => {
+      mushaf.highlightAyah(ayah.surah, ayah.ayah, hl());
+      $('#card-ayah').hidden = false;
+      $('#ayah-ref').textContent = `Surah ${ayah.surah} • Ayah ${ayah.ayah}`
+        + (ayah.words.length ? '' : ' (continues from previous page)');
+      $('#ayah-text').textContent = ayah.words.map((w) => w.text).join(' ');
+    },
+
+    onSurahClick: (surah) => {
+      mushaf.highlightSurah(surah.number, hl());
+      $('#card-surah').hidden = false;
+      $('#surah-name').textContent = surah.name_arabic;
+      $('#surah-info').textContent =
+        `#${surah.number} ${surah.name_simple} — ${surah.verses_count} ayahs, ${surah.revelation_place}`;
+    },
+
+    onJuzClick:  (j) => { $('#card-marker').hidden = false; $('#marker-info').textContent = `Start of Juz ${j.juz}`; },
+    onHizbClick: (h) => { $('#card-marker').hidden = false; $('#marker-info').textContent = `Start of Hizb ${h.hizb}`; },
+    onRubClick:  (r) => { $('#card-marker').hidden = false; $('#marker-info').textContent = `Rub ${r.rub} (quarter of Hizb ${Math.ceil(r.rub / 4)})`; },
+
+    onPageChange: (page) => { onPage(page); hideCards(); },
+  });
+
+  // ── Controls ──────────────────────────────────────────────────────────────
+  document.querySelectorAll('.hl').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      style = btn.dataset.style;
+      document.querySelectorAll('.hl').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+    });
+  });
+  $('#hl-clear').addEventListener('click', () => { mushaf.clearHighlight(); hideCards(); });
+
+  // Library keyboard navigation (← next, → previous) is on by default.
+  $('#btn-prev').addEventListener('click', () => nav(() => mushaf.previousPage()));
+  $('#btn-next').addEventListener('click', () => nav(() => mushaf.nextPage()));
+
+  const goToPageInput = () => {
+    const page = Number($('#page-input').value);
+    if (!Number.isInteger(page) || page < 1 || page > 604) {
+      showError('Page must be a whole number between 1 and 604.');
+      return;
+    }
+    nav(() => mushaf.goToPage(page));
+  };
+  $('#btn-go').addEventListener('click', goToPageInput);
+  $('#page-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') goToPageInput(); });
+
+  $('#surah-select').addEventListener('change', (e) => nav(() => mushaf.goToSurah(Number(e.target.value))));
+
+  const goToAyahInput = () => {
+    const m = /^\s*(\d+)\s*[:.]\s*(\d+)\s*$/.exec($('#ayah-input').value);
+    if (!m) { showError('Enter an ayah as surah:ayah, e.g. 2:255'); return; }
+    const [s, a] = [Number(m[1]), Number(m[2])];
+    nav(async () => {
+      await mushaf.goToAyah(s, a);
+      mushaf.highlightAyah(s, a, hl());
+    });
+  };
+  $('#btn-ayah').addEventListener('click', goToAyahInput);
+  $('#ayah-input').addEventListener('keydown', (e) => { if (e.key === 'Enter') goToAyahInput(); });
+
+  // ── Theme ─────────────────────────────────────────────────────────────────
+  const THEMES = ['system', 'light', 'dark'];
+  const LABELS = { system: '🖥 System', light: '☀ Light', dark: '🌙 Dark' };
+  let themeIdx = 0;
+  function applyTheme(theme) {
+    if (theme === 'system') document.documentElement.removeAttribute('data-color-scheme');
+    else document.documentElement.dataset.colorScheme = theme;
+    mushaf.setTheme(theme === 'system' ? 'auto' : theme);
+    $('#btn-theme').textContent = LABELS[theme];
+    try { localStorage.setItem('mushaf-theme', theme); } catch { /* ignore */ }
+  }
+  $('#btn-theme').addEventListener('click', () => {
+    themeIdx = (themeIdx + 1) % THEMES.length;
+    applyTheme(THEMES[themeIdx]);
+  });
+  try {
+    const saved = localStorage.getItem('mushaf-theme');
+    if (THEMES.includes(saved)) themeIdx = THEMES.indexOf(saved);
+  } catch { /* ignore */ }
+  applyTheme(THEMES[themeIdx]);
+
+  // ── Init ──────────────────────────────────────────────────────────────────
+  (async () => {
+    try {
+      await mushaf.init();
+      const metadata = await mushaf.getMetadata();
+      surahs = metadata.surahs;
+      $('#surah-select').innerHTML = surahs
+        .map((s) => `<option value="${s.number}">${s.number}. ${s.transliteration ?? s.name_simple} — ${s.name ?? s.name_arabic}</option>`)
+        .join('');
+      await mushaf.renderPage(1);
+    } catch (err) {
+      showError(`Initialization error: ${err.message}`);
+      console.error(err);
+    }
+  })();
+</script>
+</body>
+</html>

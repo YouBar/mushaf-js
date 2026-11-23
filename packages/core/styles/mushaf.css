@@ -1,0 +1,412 @@
+/*
+ * Font size = page width / (widest line across all 604 pages + margins), via container
+ * query units, so every page renders at the same size and every justified line fits.
+ * Each page has 15 equal line slots.
+ */
+
+.mushaf-container {
+  --mushaf-line-em: 16.4;          /* natural width of the widest line, in em */
+  --mushaf-margin-em: 1.6;         /* side margin (holds juz/hizb labels)     */
+  --mushaf-line-height: 1.78em;    /* one of the 15 line slots                */
+  --mushaf-word-gap: 0.08em;       /* word gap on centred lines               */
+  --mushaf-fallback-font: 'KFGQPC Uthmanic Script HAFS', 'Amiri Quran', 'Scheherazade New', 'Noto Naskh Arabic', serif;
+  --mushaf-ui-font: 'Amiri', 'Noto Naskh Arabic', 'Geeza Pro', 'Traditional Arabic', serif;
+
+  --mushaf-page-bg: #fffdf8;
+  --mushaf-page-border: #e4dccb;
+  --mushaf-page-shadow: 0 1px 3px rgba(60, 40, 10, 0.08), 0 8px 24px rgba(60, 40, 10, 0.06);
+  --mushaf-text: #161616;
+  --mushaf-muted: #6b5f4b;
+  --mushaf-accent: #1f6b45;        /* hover colour, margin labels            */
+  --mushaf-banner-text: #161616;   /* surah title inside the (light) banner  */
+  --mushaf-banner-filter: none;
+  --mushaf-highlight: #ffc828;          /* solid; layer opacity below */
+  --mushaf-highlight-opacity: 0.38;
+
+  direction: rtl;
+  color: var(--mushaf-text);
+  padding: 24px 16px;
+  max-width: 900px;
+  margin: 0 auto;
+  box-sizing: border-box;
+}
+
+/* Ornaments need a wider margin; the wider page keeps the text size. */
+.mushaf-container--ornaments {
+  --mushaf-margin-em: 2.3;
+  max-width: 1000px;
+}
+
+.mushaf-container[data-mushaf-theme='dark'] {
+  --mushaf-page-bg: #141414;
+  --mushaf-page-border: #2b2b2b;
+  --mushaf-page-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+  --mushaf-text: #e9e6df;
+  --mushaf-muted: #9a9387;
+  --mushaf-accent: #7fd1a4;
+  --mushaf-banner-filter: brightness(0.82) saturate(0.9);
+  --mushaf-banner-text: #e9e6df;  /* banner centre is transparent: page bg shows through */
+  --mushaf-highlight: #ffc400;
+  --mushaf-highlight-opacity: 0.26;
+}
+
+@media (prefers-color-scheme: dark) {
+  .mushaf-container:not([data-mushaf-theme='light']) {
+    --mushaf-page-bg: #141414;
+    --mushaf-page-border: #2b2b2b;
+    --mushaf-page-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+    --mushaf-text: #e9e6df;
+    --mushaf-muted: #9a9387;
+    --mushaf-accent: #7fd1a4;
+    --mushaf-banner-filter: brightness(0.82) saturate(0.9);
+    --mushaf-banner-text: #e9e6df;  /* banner centre is transparent: page bg shows through */
+    --mushaf-highlight: #ffc400;
+  --mushaf-highlight-opacity: 0.26;
+  }
+}
+
+.mushaf-page-wrap {
+  container-type: inline-size;
+}
+
+.mushaf-page {
+  /* Fallback for browsers without container query units */
+  font-size: clamp(12px, 4.6vw, 44px);
+  /* page width = (line + 2 × margin) em */
+  font-size: calc(100cqi / (var(--mushaf-line-em) + 2 * var(--mushaf-margin-em)));
+  position: relative;
+  box-sizing: border-box;
+  padding: 0.5em calc(var(--mushaf-margin-em) * 1em) 0.35em;
+  background: var(--mushaf-page-bg);
+  border: 1px solid var(--mushaf-page-border);
+  box-shadow: var(--mushaf-page-shadow);
+  color: var(--mushaf-text);
+  line-height: var(--mushaf-line-height);
+}
+
+.mushaf-page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  height: 1.3em;
+  font-size: 0.62em;
+  line-height: 1;
+  color: var(--mushaf-muted);
+  border-bottom: 1px solid var(--mushaf-page-border);
+  margin-bottom: 0.25em;
+  user-select: none;
+}
+
+.mushaf-page-header .mushaf-bsml {
+  line-height: 1;
+}
+
+/* BSML glyphs: surah titles fill their em box, juz titles are drawn smaller */
+.mushaf-page-header-surah { font-size: 1.05em; }
+.mushaf-page-header-juz   { font-size: 1.75em; }
+
+.mushaf-lines {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(15 * var(--mushaf-line-height));
+}
+
+.mushaf-page--centered .mushaf-lines {
+  justify-content: center;
+}
+
+.mushaf-line {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: var(--mushaf-line-height);
+  flex: 0 0 auto;
+  box-sizing: border-box;
+}
+
+.mushaf-line--ayah {
+  font-family: var(--mushaf-page-font), var(--mushaf-fallback-font);
+  justify-content: space-between;
+  white-space: nowrap;
+}
+
+.mushaf-line--centered {
+  justify-content: center;
+  gap: var(--mushaf-word-gap);
+}
+
+.mushaf-ayah {
+  display: contents;
+}
+
+.mushaf-word,
+.mushaf-ayah-marker {
+  position: relative;
+  z-index: 1;
+  display: block;
+  flex: 0 0 auto;
+  cursor: pointer;
+  transition: color 0.12s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mushaf-word {
+  user-select: text;
+}
+
+.mushaf-ayah-marker {
+  user-select: none;
+}
+
+.mushaf-word:hover,
+.mushaf-word--hover,
+.mushaf-ayah-marker:hover,
+.mushaf-marker--hover {
+  color: var(--mushaf-accent);
+}
+
+.mushaf-bsml {
+  font-family: 'QCF-BSML', var(--mushaf-fallback-font);
+  font-weight: normal;
+  /* QCF_BSML uses Private-Use / CJK code points, which are bidi class L.
+     Force right-to-left ordering so multi-glyph strings (the basmala) read
+     بسم → الله → الرحمن → الرحيم from the right. */
+  direction: rtl;
+  unicode-bidi: bidi-override;
+}
+
+.mushaf-surah-header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 94%;
+  aspect-ratio: 1600 / 188;
+  max-width: 100%;
+  background: var(--mushaf-surah-banner) center / 100% 100% no-repeat;
+  filter: var(--mushaf-banner-filter);
+}
+
+.mushaf-surah-name {
+  display: block;
+  font-size: 0.95em;
+  line-height: 1;
+  color: var(--mushaf-banner-text);
+  cursor: pointer;
+  user-select: none;
+  transition: opacity 0.15s ease;
+  /* Optical centring: set per title from the glyph's ink metrics */
+  transform: translateY(var(--mushaf-title-shift, -0.07em));
+}
+
+.mushaf-page--no-bsml .mushaf-surah-name,
+.mushaf-surah-name:not(.mushaf-bsml) {
+  font-family: var(--mushaf-fallback-font);
+  font-size: 0.6em;
+  transform: none;
+}
+
+.mushaf-surah-name:hover,
+.mushaf-surah--hover {
+  opacity: 0.6;
+}
+
+.mushaf-basmala-text {
+  display: block;
+  font-size: 0.92em;
+  line-height: 1;
+  color: var(--mushaf-text);
+  white-space: nowrap;
+  user-select: none;
+}
+
+.mushaf-basmala-text:not(.mushaf-bsml) {
+  font-family: var(--mushaf-fallback-font);
+  font-size: 0.8em;
+}
+
+/* Outer margin: right on odd (right-hand) pages, left on even pages. */
+.mushaf-margin-marker {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  z-index: 2;
+  box-sizing: border-box;
+  width: calc(var(--mushaf-margin-em) * 1em / 0.3);
+  padding: 0 0.35em;
+  font-family: var(--mushaf-ui-font);
+  font-size: 0.3em;
+  line-height: 1.25;
+  text-align: center;
+  white-space: normal;
+  color: var(--mushaf-accent);
+  cursor: pointer;
+  user-select: none;
+}
+
+.mushaf-page--right .mushaf-margin-marker { left: 100%; }
+.mushaf-page--left  .mushaf-margin-marker { right: 100%; }
+
+.mushaf-margin-marker:hover { opacity: 0.7; }
+
+/* Ornament (0.3em marker font size; ~2 line slots tall). */
+.mushaf-margin-marker--ornament {
+  display: flex;
+  justify-content: center;
+  padding: 0;
+  line-height: 1;
+  /* centre the ornament's label box (not the whole ornament) on the line */
+  transform: translateY(-50%);
+}
+
+.mushaf-marker-ornament {
+  position: relative;
+  display: block;
+  height: 11.5em;
+  flex: none;
+}
+
+/* width = height × glyph aspect (468 / 1024 and 250 / 1024) */
+.mushaf-marker-ornament--half { width: calc(11.5em * 468 / 1024); }
+.mushaf-marker-ornament--full { width: calc(11.5em * 250 / 1024); }
+
+/* label box centre: half = 83.3% down the ornament, full = 50% */
+.mushaf-rub-marker.mushaf-margin-marker--ornament { transform: translateY(-83.3%); }
+
+.mushaf-marker-ornament svg {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  overflow: visible;
+}
+
+.mushaf-marker-ornament path { fill: var(--mushaf-accent); }
+
+.mushaf-marker-label {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.02em;
+  font-size: 0.86em;
+  font-weight: 700;
+  line-height: 1;
+  color: var(--mushaf-text);
+  white-space: nowrap;
+}
+
+.mushaf-marker-ornament--full .mushaf-marker-label { font-size: 0.72em; }
+.mushaf-marker-label-long { font-size: 0.8em; }
+
+.mushaf-juz-marker .mushaf-bsml {
+  /* BSML title glyphs are drawn small inside their em box */
+  display: block;
+  font-size: 2.6em;
+  line-height: 1;
+}
+
+.mushaf-page-number {
+  text-align: center;
+  font-family: var(--mushaf-ui-font);
+  font-size: 0.5em;
+  line-height: 1.6;
+  color: var(--mushaf-muted);
+  margin-top: 0.4em;
+  user-select: none;
+}
+
+.mushaf-page--fallback .mushaf-line--ayah {
+  font-family: var(--mushaf-fallback-font);
+}
+
+.mushaf-page--fallback .mushaf-word,
+.mushaf-page--fallback .mushaf-ayah-marker {
+  font-size: 0.72em;
+  flex-shrink: 1;
+}
+
+/*
+ * One translucent layer per highlight with solid bands inside (see HighlightManager),
+ * behind the glyphs (words have z-index: 1).
+ */
+.mushaf-hl-layer {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.mushaf-hl-layer--background {
+  opacity: var(--mushaf-highlight-opacity);
+}
+
+/* A colour passed via HighlightConfig.color is used as-is */
+.mushaf-hl-layer--background.mushaf-hl-layer--custom-color {
+  opacity: 1;
+}
+
+.mushaf-hl {
+  position: absolute;
+  box-sizing: border-box;
+  border-radius: 0.22em;
+}
+
+.mushaf-hl--background {
+  background: var(--mushaf-hl-color, var(--mushaf-highlight));
+}
+
+/* Underline: a bar along the bottom edge of the ink band */
+.mushaf-hl--underline {
+  border-bottom: 0.07em solid var(--mushaf-hl-color, var(--mushaf-accent));
+  border-radius: 0;
+}
+
+.mushaf-hl--border {
+  border: 0.05em solid var(--mushaf-hl-color, var(--mushaf-accent));
+}
+
+/* Consecutive highlighted lines join into one block: square the joined
+   corners and drop the inner borders. */
+.mushaf-hl--join-top {
+  border-top-left-radius: 0;
+  border-top-right-radius: 0;
+}
+.mushaf-hl--join-bottom {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+}
+.mushaf-hl--border.mushaf-hl--join-top    { border-top: none; }
+.mushaf-hl--border.mushaf-hl--join-bottom { border-bottom: none; }
+
+/* `color` style: the glyphs themselves are recoloured (inline colour wins). */
+.mushaf-highlight-color {
+  color: var(--mushaf-accent);
+}
+
+@media print {
+  .mushaf-container {
+    max-width: none;
+    padding: 0;
+  }
+
+  .mushaf-page {
+    box-shadow: none;
+    border: none;
+    break-inside: avoid;
+  }
+
+  .mushaf-word,
+  .mushaf-ayah-marker,
+  .mushaf-surah-name {
+    cursor: default;
+  }
+
+  .mushaf-hl,
+  .mushaf-surah-header {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+}

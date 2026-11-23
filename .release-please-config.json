@@ -1,0 +1,21 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "packages": {
+    "packages/core": {
+      "release-type": "node",
+      "package-name": "mushaf.js"
+    },
+    "packages/vue": {
+      "release-type": "node",
+      "package-name": "@mushafjs/vue"
+    }
+  },
+  "changelog-sections": [
+    { "type": "feat",  "section": "Features" },
+    { "type": "fix",   "section": "Bug Fixes" },
+    { "type": "perf",  "section": "Performance" },
+    { "type": "docs",  "section": "Documentation", "hidden": false },
+    { "type": "build", "section": "Build", "hidden": true },
+    { "type": "chore", "section": "Miscellaneous", "hidden": true }
+  ]
+}

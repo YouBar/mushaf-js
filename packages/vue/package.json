@@ -1,0 +1,61 @@
+{
+  "name": "@mushafjs/vue",
+  "version": "1.0.0",
+  "description": "Vue 3 component wrapper for mushaf.js",
+  "main": "dist/index.js",
+  "module": "dist/index.mjs",
+  "types": "dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "import": "./dist/index.mjs",
+      "require": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "vite build",
+    "dev": "vite build --watch",
+    "typecheck": "vue-tsc -p tsconfig.typecheck.json"
+  },
+  "peerDependencies": {
+    "mushaf.js": ">=1.0.0",
+    "vue": ">=3.3.0"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^5.0.0",
+    "mushaf.js": "*",
+    "vite": "^5.0.0",
+    "vite-plugin-dts": "^4.0.0",
+    "vue": "^3.4.0",
+    "vue-tsc": "^2.0.0"
+  },
+  "keywords": [
+    "vue",
+    "quran",
+    "mushaf",
+    "madani",
+    "islamic",
+    "arabic"
+  ],
+  "author": "YouBar Solutions",
+  "contributors": [
+    {
+      "name": "Younes El Barnoussi",
+      "email": "younes@youbar.nl"
+    }
+  ],
+  "homepage": "https://github.com/YouBar/mushaf-js#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/YouBar/mushaf-js.git"
+  },
+  "bugs": "https://github.com/YouBar/mushaf-js/issues",
+  "license": "MIT",
+  "publishConfig": {
+    "access": "public"
+  }
+}

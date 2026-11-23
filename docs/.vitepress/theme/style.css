@@ -1,0 +1,152 @@
+/* Brand: neutral ink on warm paper. The Mushaf pages are the only colour. */
+:root {
+  --vp-c-brand-1: #1a1917;
+  --vp-c-brand-2: #3d3a35;
+  --vp-c-brand-3: #1a1917;
+  --vp-c-brand-soft: rgba(26, 25, 23, 0.06);
+
+  --vp-c-bg: #fbfaf8;
+  --vp-c-bg-alt: #f4f2ee;
+  --vp-c-bg-elv: #ffffff;
+  --vp-c-bg-soft: #f4f2ee;
+  --vp-c-text-1: #1a1917;
+  --vp-c-text-2: #5e5a53;
+  --vp-c-text-3: #908b82;
+  --vp-c-divider: #e7e3dc;
+  --vp-c-gutter: #e7e3dc;
+
+  --hero-glow: rgba(214, 186, 132, 0.28);
+}
+.dark {
+  --vp-c-brand-1: #edece9;
+  --vp-c-brand-2: #cfcdc8;
+  --vp-c-brand-3: #a9a6a0;
+  --vp-c-brand-soft: rgba(255, 255, 255, 0.08);
+
+  --vp-c-bg: #111110;
+  --vp-c-bg-alt: #0b0b0a;
+  --vp-c-bg-elv: #1a1918;
+  --vp-c-bg-soft: #1a1918;
+  --vp-c-text-1: #edece9;
+  --vp-c-text-2: #a8a49d;
+  --vp-c-text-3: #76726b;
+  --vp-c-divider: #272624;
+  --vp-c-gutter: #000000;
+
+  --hero-glow: rgba(214, 186, 132, 0.08);
+}
+
+/* ﷺ and ﷻ come from Amiri, loaded as a two-glyph subset in config.mts. */
+:root {
+  --vp-font-family-base: 'Inter', 'Amiri', ui-sans-serif, system-ui, sans-serif;
+}
+
+/* ── Demo frames ─────────────────────────────────────────────────────────── */
+.demo {
+  margin: 24px 0;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--vp-c-bg-soft);
+  container-type: inline-size;
+}
+.demo-bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 14px;
+  border-bottom: 1px solid var(--vp-c-divider);
+  background: var(--vp-c-bg);
+  font-size: 13px;
+}
+.demo-bar .label { color: var(--vp-c-text-2); }
+.demo-bar .spacer { flex: 1; }
+.demo-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 260px;
+  gap: 0;
+}
+.demo-body.single { grid-template-columns: minmax(0, 1fr); }
+.demo-page { padding: 18px; min-width: 0; }
+.demo-page .mushaf-container { margin: 0 auto; max-width: 520px; }
+.demo-side {
+  border-left: 1px solid var(--vp-c-divider);
+  padding: 14px;
+  font-size: 13px;
+  background: var(--vp-c-bg);
+  min-width: 0;
+}
+.demo-side h4 {
+  margin: 0 0 8px;
+  font-size: 11px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--vp-c-text-2);
+}
+.demo-side h4 + * { margin-top: 0; }
+.demo-side section + section { margin-top: 16px; }
+@container (max-width: 700px) {
+  .demo-body { grid-template-columns: minmax(0, 1fr); }
+  .demo-side { border-left: 0; border-top: 1px solid var(--vp-c-divider); }
+  .demo-page { padding: 10px; }
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 11px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 6px;
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 20px;
+  cursor: pointer;
+  transition: border-color 0.15s, background 0.15s;
+}
+.btn:hover:not(:disabled) { border-color: var(--vp-c-brand-1); }
+.btn:disabled { opacity: 0.45; cursor: default; }
+.btn.primary { background: var(--vp-c-text-1); border-color: var(--vp-c-text-1); color: var(--vp-c-bg); }
+.btn[aria-pressed='true'] { border-color: var(--vp-c-brand-1); background: var(--vp-c-brand-soft); color: var(--vp-c-brand-1); }
+.field {
+  padding: 4px 8px;
+  border: 1px solid var(--vp-c-divider);
+  border-radius: 6px;
+  background: var(--vp-c-bg-soft);
+  color: var(--vp-c-text-1);
+  font-size: 13px;
+  line-height: 20px;
+}
+.field:focus { outline: none; border-color: var(--vp-c-brand-1); }
+
+.swatch { display: inline-block; width: 12px; height: 12px; border-radius: 3px; vertical-align: -1px; margin-right: 6px; }
+.legend { list-style: none; padding: 0; margin: 0; }
+.legend li { display: flex; align-items: center; margin: 4px 0; }
+.legend li .count { margin-left: auto; color: var(--vp-c-text-2); font-variant-numeric: tabular-nums; }
+
+.arabic {
+  font-family: 'Amiri Quran', 'Amiri', 'Noto Naskh Arabic', 'Geeza Pro', serif;
+  direction: rtl;
+  font-size: 22px;
+  line-height: 1.9;
+}
+.mono { font-family: var(--vp-font-family-mono); font-size: 12px; }
+.muted { color: var(--vp-c-text-2); }
+
+.log {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  font-family: var(--vp-font-family-mono);
+  font-size: 11.5px;
+  line-height: 1.6;
+  max-height: 180px;
+  overflow: auto;
+}
+.log li { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.log li b { color: var(--vp-c-brand-1); font-weight: 600; }
+
+.demo-error { padding: 10px 14px; color: var(--vp-c-danger-1); font-size: 13px; }
